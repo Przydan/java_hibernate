@@ -89,7 +89,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>pl.przydan.HelloServerApp.HelloApp</mainClass>
+                            <mainClass>pl.przydan.helloServerApp.HelloApp</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
