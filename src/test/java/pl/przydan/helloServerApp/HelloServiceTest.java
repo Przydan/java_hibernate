@@ -1,4 +1,4 @@
-package pl.przydan.HelloServerApp;
+package pl.przydan.helloServerApp;
 
 import org.junit.Test;
 
