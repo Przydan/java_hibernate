@@ -1,7 +1,9 @@
-package pl.przydan.helloServerApp;
+package pl.przydan.helloServerApp.hello;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.przydan.helloServerApp.lang.Lang;
+import pl.przydan.helloServerApp.lang.LangRepository;
 
 import java.util.Optional;
 
@@ -16,18 +18,12 @@ class HelloService {
         this(new LangRepository());
     }
 
-    public HelloService(LangRepository repository) {
+    HelloService(LangRepository repository) {
         this.repository = repository;
     }
 
-    String prepareGreeting(String name, String lang) {
-        Integer langId;
-        try {
-            langId = Optional.ofNullable(lang).map(Integer::valueOf).orElse(FALLBACK_LANG.getId());
-        } catch (NumberFormatException e) {
-            logger.warn("Non-numeric language id used: " + lang);
-            langId = FALLBACK_LANG.getId();
-        }
+    String prepareGreeting(String name, Integer langId) {
+        langId = Optional.ofNullable(langId).orElse(FALLBACK_LANG.getId());
         var welcomeMsg = repository.findById(langId).orElse(FALLBACK_LANG).getWelcomeMsg();
         var nameToWelcome = Optional.ofNullable(name).orElse(FALLBACK_NAME);
         return welcomeMsg + " " + nameToWelcome + "!";
