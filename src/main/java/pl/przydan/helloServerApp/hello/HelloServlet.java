@@ -1,4 +1,4 @@
-package pl.przydan.helloServerApp;
+package pl.przydan.helloServerApp.hello;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,12 +9,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Optional;
 
-@WebServlet(name = "Hello", urlPatterns = {"/api/*"})
+@WebServlet(name = "Hello", urlPatterns = {"/api"})
 public class HelloServlet extends HttpServlet {
-    private final Logger logger = LoggerFactory.getLogger(HelloServlet.class);
     private static final String NAME_PARAM = "name";
     private static final String LANG_PARAM = "lang";
+    private final Logger logger = LoggerFactory.getLogger(HelloServlet.class);
 
     private HelloService service;
 
@@ -35,7 +36,12 @@ public class HelloServlet extends HttpServlet {
         logger.info("Got request with parameters " + req.getParameterMap());
         var name = req.getParameter(NAME_PARAM);
         var lang = req.getParameter(LANG_PARAM);
-        var greeting = service.prepareGreeting(name, lang);
-        resp.getWriter().write(greeting);
+        Integer langId = null;
+        try {
+            langId = Integer.valueOf(lang);
+        } catch (NumberFormatException e) {
+            logger.warn("Non-numeric language id used: " + langId);
+        }
+        resp.getWriter().write(service.prepareGreeting(name, langId));
     }
 }

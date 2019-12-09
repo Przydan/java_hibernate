@@ -1,6 +1,8 @@
-package pl.przydan.helloServerApp;
+package pl.przydan.helloServerApp.hello;
 
 import org.junit.Test;
+import pl.przydan.helloServerApp.lang.Lang;
+import pl.przydan.helloServerApp.lang.LangRepository;
 
 import java.util.Optional;
 
@@ -19,7 +21,7 @@ public class HelloServiceTest {
         String expected = WELCOME + " " + HelloService.FALLBACK_NAME + "!";
         //when
         String name = null;
-        var result = SUT.prepareGreeting(name, "-1");
+        var result = SUT.prepareGreeting(name, -1);
         //then
         assertEquals(expected, result);
     }
@@ -37,18 +39,18 @@ public class HelloServiceTest {
         assertEquals(expected, result);
     }
 
-    @Test
-    public void test_null_prepareGreeting_textLang_returnsGreetingWithFallbackIdLang() throws Exception {
-        //given
-        var mockRepository = fallbackLangIdRepository();
-        var SUT = new HelloService(mockRepository);
-        String expected = FALLBACK_LANG + " " + HelloService.FALLBACK_NAME + "!";
-        //when
-        String name = null;
-        var result = SUT.prepareGreeting(name, "abc");
-        //then
-        assertEquals(expected, result);
-    }
+//    @Test
+//    public void test_null_prepareGreeting_textLang_returnsGreetingWithFallbackIdLang() throws Exception {
+//        //given
+//        var mockRepository = fallbackLangIdRepository();
+//        var SUT = new HelloService(mockRepository);
+//        String expected = FALLBACK_LANG + " " + HelloService.FALLBACK_NAME + "!";
+//        //when
+//        String name = null;
+//        var result = SUT.prepareGreeting(name, "abc");
+//        //then
+//        assertEquals(expected, result);
+//    }
 
     @Test
     public void test_name_prepareGreeting_name_returnsGreetingWithName() throws Exception {
@@ -58,7 +60,7 @@ public class HelloServiceTest {
         String name = "test";
         String expected = WELCOME + " " + name + "!";
         //when
-        var result = SUT.prepareGreeting(name, "-1");
+        var result = SUT.prepareGreeting(name, -1);
         //then
         assertEquals(expected, result);
     }
@@ -69,25 +71,25 @@ public class HelloServiceTest {
         LangRepository mockRepository = AlwaysEmptyLangRepository();
         var SUT = new HelloService(mockRepository);
         // when
-        var result = SUT.prepareGreeting(null, "-1");
+        var result = SUT.prepareGreeting(null, -1);
         // then
         assertEquals(HelloService.FALLBACK_LANG.getWelcomeMsg() + " " + HelloService.FALLBACK_NAME + "!", result);
     }
 
     private LangRepository AlwaysEmptyLangRepository() {
         return new LangRepository() {
-                @Override
-                Optional<Lang> findById(Integer id) {
-                    return Optional.empty();
-                }
-            };
+            @Override
+            public Optional<Lang> findById(Integer id) {
+                return Optional.empty();
+            }
+        };
     }
 
 
     private LangRepository alwaysReturningHelloRepository() {
         return new LangRepository() {
             @Override
-            Optional<Lang> findById(Integer id) {
+            public Optional<Lang> findById(Integer id) {
                 return Optional.of(new Lang(null, WELCOME, null));
             }
         };
@@ -96,7 +98,7 @@ public class HelloServiceTest {
     private LangRepository fallbackLangIdRepository() {
         return new LangRepository() {
             @Override
-            Optional<Lang> findById(Integer id) {
+            public Optional<Lang> findById(Integer id) {
                 if (id.equals(HelloService.FALLBACK_LANG.getId())) {
                     return Optional.of(new Lang(null, FALLBACK_LANG, null));
                 }

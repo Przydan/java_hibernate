@@ -16,6 +16,7 @@
         <slf4j.version>1.7.28</slf4j.version>
         <javax.servlet.version>3.1.0</javax.servlet.version>
         <jetty.version>9.4.24.v20191120</jetty.version>
+        <jackson.version>2.10.0</jackson.version>
     </properties>
 
     <dependencies>
@@ -53,6 +54,11 @@
             <artifactId>jetty-annotations</artifactId>
             <version>${jetty.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
         <!-- db -->
         <dependency>
             <groupId>com.h2database</groupId>
@@ -69,13 +75,13 @@
     <build>
         <plugins>
             <plugin>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-maven-plugin</artifactId>
-            <version>6.1.0</version>
-            <configuration>
-                <url>jdbc:h2:file:./db_h2</url>
-                <user>sa</user>
-            </configuration>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>6.1.0</version>
+                <configuration>
+                    <url>jdbc:h2:file:./db_h2</url>
+                    <user>sa</user>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
