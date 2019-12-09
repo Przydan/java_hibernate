@@ -15,7 +15,7 @@ import java.io.IOException;
 public class TodoServlet extends HttpServlet {
     private final Logger logger = LoggerFactory.getLogger(TodoServlet.class);
 
-    private TodoService service;
+    private TodoRepository repository;
     private ObjectMapper mapper;
 
     /**
@@ -23,19 +23,38 @@ public class TodoServlet extends HttpServlet {
      */
     @SuppressWarnings("unused")
     public TodoServlet() {
-        this(new TodoService(), new ObjectMapper());
+        this(new TodoRepository(), new ObjectMapper());
     }
 
-    TodoServlet(TodoService service, ObjectMapper mapper) {
+    TodoServlet(TodoRepository repository, ObjectMapper mapper) {
         this.mapper = mapper;
-        this.service = service;
+        this.repository = repository;
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         logger.info("Got request with parameters " + req.getParameterMap());
-        service.findAll();
         resp.setContentType("application/json;charset=UTF-8");
-        mapper.writeValue(resp.getOutputStream(), service.findAll());
+        mapper.writeValue(resp.getOutputStream(), repository.findAll());
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        var pathInfo = req.getPathInfo();
+        try {
+            var todoId = Integer.valueOf(pathInfo.substring(1));
+            var todo = repository.toggleTodo(todoId);
+            resp.setContentType("application/json;charset=UTF-8");
+            mapper.writeValue(resp.getOutputStream(), todo);
+        } catch (NumberFormatException ex) {
+            logger.warn("Wrong path used: " + pathInfo);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        var newTodo = mapper.readValue(req.getInputStream(), Todo.class);
+        resp.setContentType("application/json;charset=UTF-8");
+        mapper.writeValue(resp.getOutputStream(), repository.addTodo(newTodo));
     }
 }

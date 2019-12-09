@@ -1,7 +1,6 @@
 package pl.przydan.helloServerApp.todo;
 
 import java.util.List;
-import java.util.Optional;
 
 import static pl.przydan.helloServerApp.HibernateUtil.getSessionFactory;
 
@@ -17,14 +16,26 @@ public class TodoRepository {
         return result;
     }
 
-    public Optional<Todo> findById(Integer id) {
+    Todo toggleTodo(Integer id) {
         var session = getSessionFactory().openSession();
         var transaction = session.beginTransaction();
 
-        var result = Optional.ofNullable(session.get(Todo.class, id));
+        var todo = session.get(Todo.class, id);
+        todo.setDone(!todo.isDone());
 
         transaction.commit();
         session.close();
-        return result;
+        return todo;
+    }
+
+    Todo addTodo(Todo newTodo) {
+        var session = getSessionFactory().openSession();
+        var transaction = session.beginTransaction();
+
+        session.persist(newTodo);
+
+        transaction.commit();
+        session.close();
+        return newTodo;
     }
 }
